@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <title>Snake Game</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html, body {
+            height: 100%;
+            background-color: #1a1aa1;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            width: 95vw;
+            max-width: 95vw;
+            max-height: 95vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            color: white;
+        }
+
+        h1 {
+            font-size: 2em;
+            text-align: center;
+        }
+
+        .fullscreen-btn {
+            position: fixed;
+            top: 15px;
+            z-index: 1001;
+            padding: 10px 15px;
+            border-radius: 50%;
+            font-size: 1.5em;
+            background-color: #95a5a6;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+        .fullscreen-btn {
+            right: 15px;
+        }
+
+        .score-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 400px;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(20, 1fr);
+            grid-template-rows: repeat(20, 1fr);
+            gap: 1px;
+            background-color: #2d2d2d;
+            width: 90vmin;
+            height: 90vmin;
+            aspect-ratio: 1 / 1;
+        }
+
+        .cell {
+            width: 100%;
+            height: 100%;
+            background-color: #333;
+        }
+
+        .snake-head {
+            background-color: #4CAF50;
+            border-radius: 50%;
+        }
+
+        .snake-body {
+            background-color: #4CAF50;
+        }
+
+        .snake-tail {
+            background-color: transparent;
+            clip-path: polygon(0% 50%, 100% 50%, 50% 0%);
+            background-color: #4CAF50;
+        }
+
+        .food-normal {
+            background-color: #FF0000; /* أحمر */
+        }
+
+        .food-big {
+            background-color: #2196F3; /* أزرق */
+        }
+
+        .food-rare {
+            background-color: #FFD700; /* ذهبي */
+        }
+
+        .controls {
+            margin-top: auto;
+            margin-bottom: 15px;
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .direction-btn {
+            padding: 12px 60px;
+            margin: 5px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1.1em;
+            background-color: #03a9f4;
+            color: white;
+            transition: background-color 0.3s ease;
+        }
+
+        .direction-btn:hover {
+            background-color: #0288d1;
+        }
+
+        .start-btn {
+            background-color: #f44336;
+        }
+
+        .start-btn:hover {
+            background-color: #e53935;
+        }
+
+        /* تصميم أزرار التحكم الجديدة */
+        .control-pad {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            width: 200px;
+            height: 200px;
+        }
+
+        .control-btn {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #03a9f4;
+            color: white;
+            font-size: 1.5em;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .up-btn {
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .down-btn {
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .left-btn {
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .right-btn {
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .pause-btn {
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 1001;
+            padding: 10px 15px;
+            border-radius: 50%;
+            font-size: 1.5em;
+            background-color: #95a5a6;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        .info-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1002;
+        }
+
+        .info-content {
+            background-color: #2d2d2d;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 90%;
+            width: 400px;
+            text-align: center;
+            direction: rtl;
+        }
+
+        .info-content h2 {
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .info-content p {
+            margin-bottom: 10px;
+            font-size: 1.1em;
+            line-height: 1.5;
+        }
+
+        .close-btn {
+            margin-top: 15px;
+            padding: 8px 20px;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.5em;
+            }
+
+            .score-container {
+                font-size: 1em;
+            }
+
+            .direction-btn {
+                padding: 10px 40px;
+                font-size: 1em;
+            }
+
+            .game-board {
+                width: 90vw;
+                height: 90vw;
+            }
+
+            .control-pad {
+                width: 180px;
+                height: 180px;
+            }
+
+            .control-btn {
+                width: 50px;
+                height: 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <button class="fullscreen-btn" onclick="toggleFullScreen()">⛶</button>
+    <button class="pause-btn" id="pauseBtn">⏸️</button>
+
+    <h1>Snake Game 🐍</h1>
+
+    <div class="score-container">
+        <div>Score: <span id="score">0</span></div>
+        <div>High Score: <span id="high-score">0</span></div>
+    </div>
+
+    <button class="direction-btn start-btn" onclick="startGame()">Start Game</button>
+
+    <div id="gameBoard" class="game-board"></div>
+
+    <div class="controls">
+        <div class="control-pad">
+            <button class="control-btn up-btn" onclick="changeDirection('up')">↑</button>
+            <button class="control-btn left-btn" onclick="changeDirection('left')">←</button>
+            <button class="control-btn right-btn" onclick="changeDirection('right')">→</button>
+            <button class="control-btn down-btn" onclick="changeDirection('down')">↓</button>
+        </div>
+    </div>
+</div>
+
+<!-- رسالة معلومات أنواع الطعام -->
+<div id="infoModal" class="info-modal">
+    <div class="info-content">
+        <h2>أنواع الطعام للثعبان</h2>
+        <p>هناك 3 أنواع من الطعام للثعبان:</p>
+        <p>الأحمر 🟥 يزيد الطول بمقدار 🟩</p>
+        <p>الأزرق 🟦 يزيد الطول بمقدار 🟩🟩🟩</p>
+        <p>الذهبي 🟨 يزيد الطول بمقدار 🟩🟩🟩🟩🟩</p>
+        <p>الترتيب حسب الندرة والوفرة:</p>
+        <p>الأحمر 70% : الأزرق 20% : الذهبي 10%</p>
+        <button class="close-btn" onclick="closeInfoModal()">فهمت!</button>
+    </div>
+</div>
+
+<script>
+    let snake = [];
+    let food = {};
+    let direction = 'right';
+    let score = 0;
+    let highScore = localStorage.getItem('highScore') ? parseInt(localStorage.getItem('highScore')) : 0;
+    let gameBoard = document.getElementById('gameBoard');
+    let scoreElement = document.getElementById('score');
+    let highScoreElement = document.getElementById('high-score');
+    let gameLoop;
+    let isPaused = false;
+    let pauseBtn = document.getElementById('pauseBtn');
+
+    // إضافة مستمع لزر التوقف المؤقت
+    pauseBtn.addEventListener('click', togglePause);
+
+    function togglePause() {
+        isPaused = !isPaused;
+        pauseBtn.innerHTML = isPaused ? '▶️' : '⏸️';
+        
+        if (isPaused) {
+            clearInterval(gameLoop);
+        } else {
+            gameLoop = setInterval(() => {
+                if (!isPaused) move();
+            }, 200);
+        }
+    }
+
+    function closeInfoModal() {
+        document.getElementById('infoModal').style.display = 'none';
+    }
+
+    function initGame() {
+        gameBoard.innerHTML = '';
+        snake = [{x: 4, y: 4}]; // بداية برأس واحد فقط
+        direction = 'right';
+        score = 0;
+        scoreElement.textContent = score;
+        highScoreElement.textContent = highScore;
+        isPaused = false;
+        pauseBtn.innerHTML = '⏸️';
+
+        for(let i = 0; i < 20; i++) {
+            for(let j = 0; j < 20; j++) {
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                cell.setAttribute('data-x', j);
+                cell.setAttribute('data-y', i);
+                gameBoard.appendChild(cell);
+            }
+        }
+
+        generateFood();
+        draw();
+    }
+
+    function draw() {
+        const cells = document.querySelectorAll('.cell');
+        cells.forEach(cell => {
+            cell.className = 'cell';
+        });
+
+        snake.forEach((segment, index) => {
+            const cell = document.querySelector(`[data-x="${segment.x}"][data-y="${segment.y}"]`);
+            if (!cell) return;
+
+            if(index === 0) {
+                cell.classList.add('snake-head');
+            } else if (index === snake.length - 1) {
+                cell.classList.add('snake-tail');
+            } else {
+                cell.classList.add('snake-body');
+            }
+        });
+
+        const foodCell = document.querySelector(`[data-x="${food.x}"][data-y="${food.y}"]`);
+        if (foodCell) {
+            foodCell.classList.add(food.type);
+        }
+    }
+
+    function generateFood() {
+        const emptyCells = [];
+        const cells = document.querySelectorAll('.cell');
+
+        cells.forEach(cell => {
+            const x = parseInt(cell.getAttribute('data-x'));
+            const y = parseInt(cell.getAttribute('data-y'));
+
+            if (!snake.some(segment => segment.x === x && segment.y === y)) {
+                emptyCells.push({x, y});
+            }
+        });
+
+        if (emptyCells.length === 0) return;
+
+        const randomIndex = Math.floor(Math.random() * emptyCells.length);
+        const selected = emptyCells[randomIndex];
+
+        const typeRoll = Math.random();
+
+        let foodType = 'food-normal';
+        let foodValue = 1;
+        let scoreIncrease = 10;
+
+        if (typeRoll < 0.10) {
+            foodType = 'food-rare';
+            foodValue = 5;
+            scoreIncrease = 50;
+        } else if (typeRoll < 0.30) {
+            foodType = 'food-big';
+            foodValue = 3;
+            scoreIncrease = 30;
+        }
+
+        food = {
+            x: selected.x,
+            y: selected.y,
+            type: foodType,
+            value: foodValue,
+            scoreIncrease: scoreIncrease
+        };
+    }
+
+    function toggleFullScreen() {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen();
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            }
+        }
+    }
+
+    function move() {
+        const head = {...snake[0]};
+
+        switch(direction) {
+            case 'right': head.x++; break;
+            case 'left': head.x--; break;
+            case 'up': head.y--; break;
+            case 'down': head.y++; break;
+        }
+
+        // التفاف عند الحواف
+        head.x = (head.x + 20) % 20;
+        head.y = (head.y + 20) % 20;
+
+        // التصادم مع الذات
+        if(snake.some((seg, i) => i > 0 && seg.x === head.x && seg.y === head.y)) {
+            gameOver();
+            return;
+        }
+
+        snake.unshift(head);
+
+        if(head.x === food.x && head.y === food.y) {
+            score += food.scoreIncrease;
+            scoreElement.textContent = score;
+
+            generateFood();
+
+            // 💡 هنا يتم زيادة الطول بمقدار food.value
+            // نقوم بـ unshift فارغة لزيادة الطول دون تنفيذ pop
+            for (let i = 1; i < food.value; i++) {
+                snake.unshift({...snake[0]});
+            }
+
+        } else {
+            snake.pop(); // نزيل الذيل إذا لم يؤكل شيء
+        }
+
+        draw();
+    }
+
+    function gameOver() {
+        clearInterval(gameLoop);
+        if (score > highScore) {
+            highScore = score;
+            localStorage.setItem('highScore', highScore);
+        }
+        alert(`Game Over! Final Score: ${score}`);
+        initGame();
+    }
+
+    function startGame() {
+        initGame();
+        clearInterval(gameLoop);
+        gameLoop = setInterval(() => {
+            if (!isPaused) move();
+        }, 200);
+    }
+
+    function changeDirection(newDir) {
+        if(newDir === 'up' && direction !== 'down') direction = 'up';
+        else if(newDir === 'down' && direction !== 'up') direction = 'down';
+        else if(newDir === 'left' && direction !== 'right') direction = 'left';
+        else if(newDir === 'right' && direction !== 'left') direction = 'right';
+    }
+
+    // إضافة دعم لوحة المفاتيح
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowUp' || e.key === 'w') changeDirection('up');
+        else if (e.key === 'ArrowDown' || e.key === 's') changeDirection('down');
+        else if (e.key === 'ArrowLeft' || e.key === 'a') changeDirection('left');
+        else if (e.key === 'ArrowRight' || e.key === 'd') changeDirection('right');
+        else if (e.key === ' ' || e.key === 'p') togglePause();
+    });
+
+    // تسجيل Service Worker للـ PWA
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+            navigator.serviceWorker.register('sw.js').then(function(registration) {
+                console.log('ServiceWorker registration successful with scope: ', registration.scope);
+            }, function(err) {
+                console.log('ServiceWorker registration failed: ', err);
+            });
+        });
+    }
+
+    window.onload = () => {
+        highScoreElement.textContent = highScore;
+    };
+
+    initGame();
+</script>
+</body>
+</html>
