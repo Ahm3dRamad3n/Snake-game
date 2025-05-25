@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
     <title>Snake Game</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="./manifest.json">
     <style>
         * {
             margin: 0;
@@ -534,7 +534,7 @@
     // تسجيل Service Worker للـ PWA
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
-            navigator.serviceWorker.register('sw.js').then(function(registration) {
+            navigator.serviceWorker.register('./sw.js').then(function(registration) {
                 console.log('ServiceWorker registration successful with scope: ', registration.scope);
             }, function(err) {
                 console.log('ServiceWorker registration failed: ', err);
