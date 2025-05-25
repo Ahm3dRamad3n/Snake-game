@@ -2,19 +2,19 @@
   "name": "Snake Game",
   "short_name": "Snake",
   "description": "لعبة الثعبان الكلاسيكية",
-  "start_url": "./index.html",
+  "start_url": "/Snake-game/index.html",
   "display": "standalone",
   "background_color": "#1a1aa1",
   "theme_color": "#1a1aa1",
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "./icon-192.png",
+      "src": "/Snake-game/icon-192.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "./icon-512.png",
+      "src": "/Snake-game/icon-512.png",
       "type": "image/png",
       "sizes": "512x512"
     }
