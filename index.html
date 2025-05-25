@@ -38,22 +38,6 @@
             text-align: center;
         }
 
-        .fullscreen-btn {
-            position: fixed;
-            top: 15px;
-            z-index: 1001;
-            padding: 10px 15px;
-            border-radius: 50%;
-            font-size: 1.5em;
-            background-color: #95a5a6;
-            color: #fff;
-            border: none;
-            cursor: pointer;
-        }
-        .fullscreen-btn {
-            right: 15px;
-        }
-
         .score-container {
             display: flex;
             justify-content: space-between;
@@ -153,12 +137,12 @@
 
         .control-btn {
             position: absolute;
-            width: 60px;
-            height: 60px;
+            width: 90px;
+            height: 90px;
             border-radius: 50%;
             background-color: #03a9f4;
             color: white;
-            font-size: 1.5em;
+            font-size: 2.5em;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -219,7 +203,7 @@
         }
 
         .info-content {
-            background-color: #2d2d2d;
+            background-color: #c5b3b3;
             padding: 20px;
             border-radius: 10px;
             max-width: 90%;
@@ -270,20 +254,19 @@
             }
 
             .control-pad {
-                width: 180px;
-                height: 180px;
+                width: 200px;
+                height: 200px;
             }
 
             .control-btn {
-                width: 50px;
-                height: 50px;
+                width: 90px;
+                height: 90px;
             }
         }
     </style>
 </head>
 <body>
 <div class="container">
-    <button class="fullscreen-btn" onclick="toggleFullScreen()">⛶</button>
     <button class="pause-btn" id="pauseBtn">⏸️</button>
 
     <h1>Snake Game 🐍</h1>
@@ -312,10 +295,10 @@
     <div class="info-content">
         <h2>أنواع الطعام للثعبان</h2>
         <p>هناك 3 أنواع من الطعام للثعبان:</p>
-        <p>الأحمر 🟥 يزيد الطول بمقدار 🟩</p>
-        <p>الأزرق 🟦 يزيد الطول بمقدار 🟩🟩🟩</p>
-        <p>الذهبي 🟨 يزيد الطول بمقدار 🟩🟩🟩🟩🟩</p>
-        <p>الترتيب حسب الندرة والوفرة:</p>
+        <p>الأحمر 🟥 يكبر بمقدار 🟩</p>
+        <p>الأزرق 🟦 يكبر بمقدار 🟩🟩🟩</p>
+        <p>الذهبي 🟨 يكبر بمقدار 🟩🟩🟩🟩🟩</p>
+        <p>نسب ظهور انواع الطعام الثلاثه:</p>
         <p>الأحمر 70% : الأزرق 20% : الذهبي 10%</p>
         <button class="close-btn" onclick="closeInfoModal()">فهمت!</button>
     </div>
@@ -340,7 +323,7 @@
     function togglePause() {
         isPaused = !isPaused;
         pauseBtn.innerHTML = isPaused ? '▶️' : '⏸️';
-        
+
         if (isPaused) {
             clearInterval(gameLoop);
         } else {
@@ -444,16 +427,6 @@
             value: foodValue,
             scoreIncrease: scoreIncrease
         };
-    }
-
-    function toggleFullScreen() {
-        if (!document.fullscreenElement) {
-            document.documentElement.requestFullscreen();
-        } else {
-            if (document.exitFullscreen) {
-                document.exitFullscreen();
-            }
-        }
     }
 
     function move() {
