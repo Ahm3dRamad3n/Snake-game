@@ -4,8 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
     <title>Snake Game</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="manifest" href="/Snake-game/manifest.json">
+    <!-- <script src="https://cdn.tailwindcss.com"></script> --> <!-- Removed CDN link -->
+    <link rel="stylesheet" href="./tailwind.min.css"> <!-- Added local Tailwind CSS link -->
+    <link rel="manifest" href="./manifest.json"> <!-- Changed to relative path -->
     <style>
         * {
             margin: 0;
@@ -507,7 +508,8 @@
     // تسجيل Service Worker للـ PWA
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
-            navigator.serviceWorker.register('/Snake-game/sw.js', {scope: '/Snake-game/'}).then(function(registration) {
+            // Changed to relative path and scope
+            navigator.serviceWorker.register('./sw.js', {scope: './'}).then(function(registration) {
                 console.log('ServiceWorker registration successful with scope: ', registration.scope);
             }, function(err) {
                 console.log('ServiceWorker registration failed: ', err);
